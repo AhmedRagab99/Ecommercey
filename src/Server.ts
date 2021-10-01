@@ -1,4 +1,4 @@
-import { configureDB } from "./configureDB";
+import { configureDB } from "./utils/configureDB";
 import express, { Application } from "express";
 import * as bodyParser from "body-parser";
 import morgan from "morgan";
