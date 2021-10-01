@@ -8,7 +8,8 @@
     "build": "tsc",
     "start:dev": "nodemon src/index.ts",
     "test:testfile": "jest ./test/test.spec.ts --watch",
-    "test:all": "jest  --watch"
+    "test:all": "jest  --watch",
+    "test:helpers": "jest ./test/helper.spec.ts --coverage --watch"
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,3 @@
-import { number } from "joi";
-
 describe("first test file", () => {
   it("should test the console logging", () => {
     const x = 1123123123;

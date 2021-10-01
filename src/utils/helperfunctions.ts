@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import { string } from "joi";
 import moment from "moment";
 
 export async function hash(

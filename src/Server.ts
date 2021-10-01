@@ -3,6 +3,8 @@ import express, { Application } from "express";
 import * as bodyParser from "body-parser";
 import morgan from "morgan";
 import cors from "cors";
+import controllers from "./controllers";
+import { extend } from "joi";
 export default class Server {
   private app: Application;
   private configureDB: configureDB;
@@ -10,6 +12,7 @@ export default class Server {
   constructor() {
     this.app = express();
     this.configureDB = new configureDB();
+
     this.configServer();
   }
 
@@ -27,14 +30,19 @@ export default class Server {
 
   private configServer() {
     this.startMiddlewares();
+    this.registerControllers();
   }
 
   private startMiddlewares() {
     this.app.use(express.json());
     this.app.use(express.urlencoded());
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded());
+    // this.app.use(bodyParser.json());
+    // this.app.use(bodyParser.urlencoded(extended:false));
     this.app.use(morgan("dev"));
-    this.app.use(cors());
+    // this.app.use(cors());
+  }
+
+  private registerControllers(): void {
+    controllers.forEach((controller) => controller.register(this.app));
   }
 }
