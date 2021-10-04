@@ -5,12 +5,13 @@ import {
 } from "../../utils/helperfunctions";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongoose";
+import { ApiError } from "../../utils/ApiError";
 export class User {
   constructor(
     public name: string,
     public email: string,
     public password: string,
-    public age: string,
+    public age: number,
     public photo?: string,
     public createdAt?: string,
     public _id?: ObjectId
@@ -24,10 +25,12 @@ export class User {
     return await compareHashedValue(password, this.password);
   }
 
-  public generateToken(): string {
+  public generateAuthenticationToken(): string {
     return jwt.sign(
       {
         _id: this._id,
+        name: this.name,
+        email: this.email,
       },
       process.env.JWT_SECRET as string,
       { expiresIn: process.env.JWT_EXPIRY_DATE }

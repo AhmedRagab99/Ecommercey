@@ -4,8 +4,11 @@ import {
   UserRepository,
 } from "./../repositories/UserRepository";
 export default class UserService {
-  private userRepository: IUserRepository = new UserRepository();
+  private userRepository: IUserRepository;
 
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
   public async findAll(): Promise<User[]> {
     return this.userRepository.findAll();
   }

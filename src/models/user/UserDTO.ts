@@ -5,7 +5,7 @@ export interface UserDTO {
   name: string;
   email: string;
   password: string;
-  age: string;
+  age: number;
   photo?: string;
   createdAt?: string;
 }

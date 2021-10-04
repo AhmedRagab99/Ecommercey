@@ -9,7 +9,8 @@
     "start:dev": "nodemon src/index.ts",
     "test:testfile": "jest ./test/test.spec.ts --watch",
     "test:all": "jest  --watch",
-    "test:helpers": "jest ./test/helper.spec.ts --coverage --watch"
+    "test:helpers": "jest ./test/helper.spec.ts --coverage --watch",
+    "test:repos": "jest ./test/repositories --watch"
   },
   "keywords": [],
   "author": "",
