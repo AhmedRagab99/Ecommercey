@@ -16,16 +16,18 @@ export class UserRepository
   }
 
   public async findByEmail(email: string): Promise<User | undefined> {
-    const model = await this._model.find({ email });
-    if (!model.length) {
+    const model = await this._model.findOne({ email });
+    if (!model) {
       return undefined;
     }
-    return this.toEntity(model[0]);
+    console.log(model.password);
+    return this.toEntity(model);
   }
 
   protected toEntity(item: userType): User {
-    console.log(item);
     const { name, email, password, age, photo, createdAt, _id } = item;
-    return new User(name, email, password, age, photo, createdAt, _id);
+    const newUser = new User(name, email, password, age, photo, createdAt, _id);
+    console.log(newUser);
+    return newUser;
   }
 }

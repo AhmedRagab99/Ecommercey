@@ -15,7 +15,13 @@ const userSchema = new Schema(
       max: 1000,
       trim: true,
     },
-    age: { type: Number, required: true },
+    password: {
+      type: String,
+      required: true,
+      min: 6,
+      max: 100,
+    },
+    age: { type: Number, required: true, min: 2, max: 100 },
     photo: {
       type: String,
       default:

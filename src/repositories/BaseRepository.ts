@@ -17,6 +17,7 @@ export abstract class BaseRepository<TEntity, TModel extends Document>
   }
   public async findById(id: string): Promise<TEntity | undefined> {
     const model = await this._model.findById(id);
+
     if (!model) {
       return undefined;
     }

@@ -1,11 +1,6 @@
-import {
-  compareHashedValue,
-  convertToLocalTimeormat,
-  hash,
-} from "../../utils/helperfunctions";
+import { compareHashedValue, hash } from "../../utils/helperfunctions";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongoose";
-import { ApiError } from "../../utils/ApiError";
 export class User {
   constructor(
     public name: string,
@@ -29,8 +24,6 @@ export class User {
     return jwt.sign(
       {
         _id: this._id,
-        name: this.name,
-        email: this.email,
       },
       process.env.JWT_SECRET as string,
       { expiresIn: process.env.JWT_EXPIRY_DATE }

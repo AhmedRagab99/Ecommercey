@@ -1,4 +1,4 @@
-import { UserModel } from "./../../src/models/user/UserSchema";
+import { UserModel, userType } from "./../../src/models/user/UserSchema";
 import { User } from "../../src/models/user/User";
 import {
   IUserRepository,
@@ -6,11 +6,30 @@ import {
 } from "../../src/repositories/UserRepository";
 import { configureDB } from "../../src/utils/configureDB";
 import UserService from "../../src/services/UserService";
+import AccountController from "../../src/controllers/AcountController";
+import { BaseRepository } from "../../src/repositories/BaseRepository";
 
 // jest.mock("../../src/repositories/UserRepository",{})
 // const user = new User("ahmeddd", "test@test.com", "123123", "123");
 // let userRepo = new UserService();
-describe("test testing", () => {});
+describe("test testing", () => {
+  let controller = new UserRepository().create(
+    new User("ahmeddd", "test@test.com", "123123", 123)
+  );
+
+  // beforeAll(() => {
+  //   controller.create = jest.fn().mockReturnValueOnce(() => {
+  //     new User("ahmeddd", "test@test.com", "123123", 123);
+  //   });
+  // });
+  // beforeEach(() => {
+  //   controller = new UserRepository();
+  // });
+  test("test thindgs", async () => {
+    // let rs = await controller.create;
+    // console.log(rs);
+  });
+});
 
 // describe('When data is valid', () => {
 //     beforeAll(() => {

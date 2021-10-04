@@ -5,6 +5,8 @@ import morgan from "morgan";
 import cors from "cors";
 import controllers from "./controllers";
 import { extend } from "joi";
+import dotenv from "dotenv";
+
 export default class Server {
   private app: Application;
   private configureDB: configureDB;
@@ -34,6 +36,7 @@ export default class Server {
   }
 
   private startMiddlewares() {
+    dotenv.config();
     this.app.use(express.json());
     this.app.use(express.urlencoded());
     // this.app.use(bodyParser.json());
