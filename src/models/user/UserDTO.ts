@@ -8,4 +8,6 @@ export interface UserDTO {
   age: number;
   photo?: string;
   createdAt?: string;
+  passwordResetToken?: String;
+  passwordResetTokenExpiryDate?: Date;
 }

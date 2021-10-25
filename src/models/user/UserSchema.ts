@@ -31,6 +31,8 @@ const userSchema = new Schema(
       type: String,
       default: convertToLocalTimeormat(Date.now()),
     },
+    passwordResetToken: String,
+    passwordResetTokenExpiryDate: Date,
   },
   { strict: false }
 );

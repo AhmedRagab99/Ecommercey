@@ -5,6 +5,7 @@ import { BaseRepository } from "./BaseRepository";
 
 export interface IUserRepository extends BaseRepository<User, userType> {
   findByEmail(email: string): Promise<User | undefined>;
+  // saveUser(data: any): Promise<User | undefined>;
 }
 
 export class UserRepository
@@ -25,9 +26,29 @@ export class UserRepository
   }
 
   protected toEntity(item: userType): User {
-    const { name, email, password, age, photo, createdAt, _id } = item;
-    const newUser = new User(name, email, password, age, photo, createdAt, _id);
-    console.log(newUser);
+    const {
+      name,
+      email,
+      password,
+      age,
+      photo,
+      createdAt,
+      _id,
+      passwordResetToken,
+      passwordResetTokenExpiryDate,
+    } = item;
+    const newUser = new User(
+      name,
+      email,
+      password,
+      age,
+      photo,
+      createdAt,
+      _id,
+      passwordResetToken,
+      passwordResetTokenExpiryDate
+    );
+    // console.log(newUser);
     return newUser;
   }
 }

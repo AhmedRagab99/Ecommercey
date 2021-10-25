@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import moment from "moment";
+import crypto from "crypto";
 
 export async function hash(
   dataToHash: any,
@@ -22,4 +23,8 @@ export function convertToLocalTimeormat(date: any): string {
   const FORMAT = "YYYY ddd MMM DD HH:mm";
   const resDate = moment(date).format("LLLL");
   return resDate;
+}
+
+export function encryptValue(value: string): string {
+  return crypto.createHash("sha256").update(value).digest("hex");
 }
