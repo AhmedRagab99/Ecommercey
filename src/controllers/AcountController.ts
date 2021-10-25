@@ -12,7 +12,8 @@ import { validateLoginInputs, validateRegistraionInputs } from "../validation";
 import { IController } from "./interfaces/IController";
 import { encryptValue } from "../utils/helperfunctions";
 import { UserModel } from "../models/user/UserSchema";
-
+import { upload } from "../utils/multer";
+import { uploads } from "../utils/upload";
 export default class AccountController implements IController {
   private userService: IUserServices;
 
@@ -26,6 +27,11 @@ export default class AccountController implements IController {
     router.post("/login", this.userLogin.bind(this));
     router.get("/test", authorize, this.testToken.bind(this));
     router.post("/forgot-password", this.forgetPassword.bind(this));
+    router.post(
+      "/upload-image",
+      upload.single("image"),
+      this.uploadImage.bind(this)
+    );
     router.patch("/reset-password/:token", this.resetPassword.bind(this));
 
     app.use("/user", router);
@@ -100,8 +106,30 @@ export default class AccountController implements IController {
     }
   }
 
+  private async uploadImage(req: Request, res: Response, next: NextFunction) {
+    try {
+      const uploader = async (path: any) =>
+        await uploads(path, "images/profiles");
+
+      const filePath = req.file?.path;
+      console.log(req.file);
+      const result = await uploader(
+        filePath ??
+          "/Users/ahmedragab/Desktop/Ecommercey/src/utils/2021-10-25T22:41:23.602Z-test.png"
+      );
+      console.log(result);
+      res.status(200).json({
+        message: "images uploaded successfully",
+        data: result,
+      });
+    } catch (err) {
+      let error = new ApiError("Cannot upload image!", 500, { body: err });
+      errorHandler(error, req, res, next);
+    }
+  }
+
   private async testToken(req: Request, res: Response, next: NextFunction) {
-    let authUser = req.user;
+    let authUser: any = req.user;
     let user = await this.userService.findById(authUser._id);
 
     res.send({

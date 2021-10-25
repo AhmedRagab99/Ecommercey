@@ -6,6 +6,9 @@ import cors from "cors";
 import controllers from "./controllers";
 import { extend } from "joi";
 import dotenv from "dotenv";
+import passport from "passport";
+import { Strategy } from "passport-facebook";
+import cloudinary from "cloudinary";
 
 export default class Server {
   private app: Application;
@@ -39,6 +42,10 @@ export default class Server {
     dotenv.config();
     this.app.use(express.json());
     this.app.use(express.urlencoded());
+    // this.app.use(express.static(__dirname));
+
+    // this.app.use(passport.initialize());
+    // this.app.use(passport.session());
     // this.app.use(bodyParser.json());
     // this.app.use(bodyParser.urlencoded(extended:false));
     this.app.use(morgan("dev"));

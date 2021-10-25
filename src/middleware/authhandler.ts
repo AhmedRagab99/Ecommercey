@@ -12,9 +12,9 @@ export const authorize = (req: Request, res: Response, next: NextFunction) => {
       next
     );
   }
-  const user = getUserFromToken(token ?? "", req, res, next);
+  const user: any = getUserFromToken(token ?? "", req, res, next);
   req.user = user;
-  console.log(req.user._id);
+  // console.log(req.user?._id!);
   next();
 };
 

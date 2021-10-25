@@ -1,3 +1,4 @@
+import passport from "passport";
 import { ObjectId } from "mongoose";
 import { User } from "../models/user/User";
 import {
@@ -45,6 +46,7 @@ export default class UserService implements IUserServices {
   public async findById(id: string): Promise<User | undefined> {
     return await this.userRepository.findById(id);
   }
+
   public async save(item: User): Promise<User> {
     const res = await this.userRepository.save(item);
 
