@@ -1,3 +1,4 @@
+import { IUploadImage, UploadImages } from "./../utils/upload";
 import { ObjectId } from "mongoose";
 import { sendEmail } from "./../utils/email";
 import { IUserServices } from "./../services/UserService";
@@ -13,12 +14,18 @@ import { IController } from "./interfaces/IController";
 import { encryptValue } from "../utils/helperfunctions";
 import { UserModel } from "../models/user/UserSchema";
 import { upload } from "../utils/multer";
+
 import { uploads } from "../utils/upload";
 export default class AccountController implements IController {
   private userService: IUserServices;
+  private uploadImages: IUploadImage;
 
-  constructor(userService: IUserServices = new UserService()) {
+  constructor(
+    userService: IUserServices = new UserService(),
+    uploadImage: IUploadImage = new UploadImages()
+  ) {
     this.userService = userService;
+    this.uploadImages = uploadImage;
   }
 
   register(app: Application): void {
@@ -28,8 +35,9 @@ export default class AccountController implements IController {
     router.get("/test", authorize, this.testToken.bind(this));
     router.post("/forgot-password", this.forgetPassword.bind(this));
     router.post(
-      "/upload-image",
+      "/upload",
       upload.single("image"),
+      authorize,
       this.uploadImage.bind(this)
     );
     router.patch("/reset-password/:token", this.resetPassword.bind(this));
@@ -58,7 +66,7 @@ export default class AccountController implements IController {
       });
       res.json(test);
     } else {
-      await this.userService.save(user);
+      await this.userService.create(user);
       res.status(201).json("Success register user");
     }
   }
@@ -109,7 +117,7 @@ export default class AccountController implements IController {
   private async uploadImage(req: Request, res: Response, next: NextFunction) {
     try {
       const uploader = async (path: any) =>
-        await uploads(path, "images/profiles");
+        await this.uploadImages.uploadSingleImage(path, "images/profiles");
 
       const filePath = req.file?.path;
       console.log(req.file);
@@ -117,6 +125,21 @@ export default class AccountController implements IController {
         filePath ??
           "/Users/ahmedragab/Desktop/Ecommercey/src/utils/2021-10-25T22:41:23.602Z-test.png"
       );
+
+      const user: any = req.user;
+      const newUser = await this.userService.findById(user._id);
+      if (newUser) {
+        console.log(newUser);
+        newUser.photo = result.secure_url;
+        await this.userService.updateOne(user._id, newUser);
+      }
+
+      // then(async (res) => {
+      //   res!.photo = result.secure_url ?? ("" as string);
+      //   console.log("res photo ", res);
+      //   await this.userService.Save({ res });
+      //   console.log("test user ", test);
+      // });
       console.log(result);
       res.status(200).json({
         message: "images uploaded successfully",

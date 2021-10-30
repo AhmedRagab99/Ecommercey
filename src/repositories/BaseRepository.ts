@@ -13,6 +13,13 @@ export abstract class BaseRepository<TEntity, TModel extends Document>
 
     return models.map((model) => this.toEntity(model));
   }
+
+  public async create(item: TEntity): Promise<TEntity> {
+    const model = await this._model.create(item);
+
+    return this.toEntity(model);
+  }
+
   public async find(item: any): Promise<TEntity[]> {
     const models = await this._model.find(item);
     return models.map((model) => this.toEntity(model));
@@ -36,10 +43,24 @@ export abstract class BaseRepository<TEntity, TModel extends Document>
     }
     return this.toEntity(model);
   }
-  public async save(item: TEntity): Promise<TEntity> {
-    const model = await new this._model(item).save();
+  public async Save(item: any): Promise<TEntity | undefined> {
+    // const model =
+    const model = await this._model.find(item);
+    if (!model[0]) {
+      return undefined;
+    }
 
-    return this.toEntity(model);
+    const res = await model[0].save();
+    console.log("saved model is ", res);
+
+    if (!res) {
+      return undefined;
+    }
+    return this.toEntity(res);
+
+    // await this._model(item).save();
+
+    // return this.toEntity(model);
   }
 
   // public async saveItems(item:T)

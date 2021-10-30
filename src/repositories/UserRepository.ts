@@ -15,6 +15,9 @@ export class UserRepository
   constructor(model: Model<userType> = UserModel) {
     super(model);
   }
+  // public async saveUser(data: any): Promise<User | undefined> {
+  //   await this.findOne(data).then(res=>{ })
+  // }
 
   public async findByEmail(email: string): Promise<User | undefined> {
     const model = await this._model.findOne({ email });

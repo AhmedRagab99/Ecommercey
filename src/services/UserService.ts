@@ -10,13 +10,14 @@ export interface IUserServices {
   findAll(): Promise<User[]>;
   find(item: any): Promise<User[]>;
   findById(id: string): Promise<User | undefined>;
-  save(item: User): Promise<User>;
+  Save(item: any): Promise<User | undefined>;
   update(id: ObjectId, item: User): Promise<User | undefined>;
   delete(id: string): void;
   findByEmail(email: string): Promise<User | undefined>;
   resetPassword(user: User): string;
   findOne(item: any): Promise<User | undefined>;
   updateOne(id: ObjectId, item: User): Promise<User | undefined>;
+  create(item: User): Promise<User | undefined>;
   // saveUser(data: any, searchedItems: any): Promise<User | undefined>;
 }
 export default class UserService implements IUserServices {
@@ -25,7 +26,14 @@ export default class UserService implements IUserServices {
   constructor() {
     this.userRepository = new UserRepository();
   }
-  findOne(item: any): Promise<User | undefined> {
+
+  public async create(item: User): Promise<User> {
+    const res = await this.userRepository.create(item);
+    // console.log(res);
+    return res;
+  }
+
+  public async findOne(item: any): Promise<User | undefined> {
     return this.userRepository.findOne(item);
   }
   // public async saveUser(data: any): Promise<User | undefined> {
@@ -47,10 +55,8 @@ export default class UserService implements IUserServices {
     return await this.userRepository.findById(id);
   }
 
-  public async save(item: User): Promise<User> {
-    const res = await this.userRepository.save(item);
-
-    return res;
+  public async Save(item: User): Promise<User | undefined> {
+    return await this.userRepository.Save(item);
   }
 
   public async update(id: ObjectId, item: User): Promise<User | undefined> {
