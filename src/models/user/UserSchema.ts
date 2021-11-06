@@ -7,10 +7,12 @@ export type userType = UserDTO & Document;
 const userSchema = new Schema(
   {
     name: { type: String, required: true, min: 5, max: 100, trim: true },
+    oAuthId: { type: String, min: 4, default: "" },
+    oAuthToken: { type: String, min: 4 },
     email: {
       type: String,
       required: true,
-      unique: true,
+
       min: 5,
       max: 1000,
       trim: true,
@@ -20,8 +22,9 @@ const userSchema = new Schema(
       required: true,
       min: 6,
       max: 100,
+      default: " ",
     },
-    age: { type: Number, required: true, min: 2, max: 100 },
+    age: { type: Number, required: true, min: 2, max: 100, default: 18 },
     photo: {
       type: String,
       default:
@@ -33,8 +36,8 @@ const userSchema = new Schema(
     },
     passwordResetToken: String,
     passwordResetTokenExpiryDate: Date,
-  },
-  { strict: false }
+  }
+  // { strict: false }
 );
 
 export const UserModel: Model<userType> = model<userType>("User", userSchema);

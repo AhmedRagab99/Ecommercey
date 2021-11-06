@@ -11,12 +11,12 @@ export interface IUserServices {
   find(item: any): Promise<User[]>;
   findById(id: string): Promise<User | undefined>;
   Save(item: any): Promise<User | undefined>;
-  update(id: ObjectId, item: User): Promise<User | undefined>;
+  update(id: string, item: User): Promise<User | undefined>;
   delete(id: string): void;
   findByEmail(email: string): Promise<User | undefined>;
   resetPassword(user: User): string;
   findOne(item: any): Promise<User | undefined>;
-  updateOne(id: ObjectId, item: User): Promise<User | undefined>;
+  updateOne(id: string, item: User): Promise<User | undefined>;
   create(item: User): Promise<User | undefined>;
   // saveUser(data: any, searchedItems: any): Promise<User | undefined>;
 }
@@ -59,7 +59,7 @@ export default class UserService implements IUserServices {
     return await this.userRepository.Save(item);
   }
 
-  public async update(id: ObjectId, item: User): Promise<User | undefined> {
+  public async update(id: string, item: User): Promise<User | undefined> {
     return await this.userRepository.update(id, item);
   }
 
@@ -71,7 +71,7 @@ export default class UserService implements IUserServices {
     return await this.userRepository.findByEmail(email);
   }
 
-  public async updateOne(id: ObjectId, item: User): Promise<User | undefined> {
+  public async updateOne(id: string, item: User): Promise<User | undefined> {
     return await this.userRepository.updateOne(id, item);
   }
 }

@@ -1,3 +1,4 @@
+import { string } from "joi";
 import { compareHashedValue, hash } from "../../utils/helperfunctions";
 import jwt from "jsonwebtoken";
 import { ObjectId } from "mongoose";
@@ -6,13 +7,15 @@ export class User {
   constructor(
     public name: string,
     public email: string,
-    public password: string,
-    public age: number,
+    public age?: number,
+    public password?: string,
     public photo?: string,
     public createdAt?: string,
-    public _id?: ObjectId,
+    public _id?: string,
     public passwordResetToken?: String,
-    public passwordResetTokenExpiryDate?: Date
+    public passwordResetTokenExpiryDate?: Date,
+    public oAuthId?: string,
+    public oAuthToken?: string
   ) {}
 
   public async hashPasswords(): Promise<string> {
@@ -20,7 +23,7 @@ export class User {
   }
 
   public async validatePasswords(password: string): Promise<boolean> {
-    return await compareHashedValue(password, this.password);
+    return await compareHashedValue(password, this.password!);
   }
 
   public createPasswordResetToken = (): string => {

@@ -15,21 +15,87 @@ import { encryptValue } from "../utils/helperfunctions";
 import { UserModel } from "../models/user/UserSchema";
 import { upload } from "../utils/multer";
 
-import { uploads } from "../utils/upload";
+import "../utils/passport";
+import passport from "passport";
+import GoogleStrategy, { IGoogleStrateegy } from "../utils/passport";
+// import { uploads } from "../utils/upload";
 export default class AccountController implements IController {
   private userService: IUserServices;
   private uploadImages: IUploadImage;
+  private googleStrategy: IGoogleStrateegy;
 
   constructor(
     userService: IUserServices = new UserService(),
-    uploadImage: IUploadImage = new UploadImages()
+    uploadImage: IUploadImage = new UploadImages(),
+    googleStrategy: IGoogleStrateegy = new GoogleStrategy(userService)
   ) {
     this.userService = userService;
     this.uploadImages = uploadImage;
+    this.googleStrategy = googleStrategy;
+    // this.googleStrategy.setup();
+    this.googleStrategy.facebookSetup();
+    this.googleStrategy.setup();
   }
 
   register(app: Application): void {
     const router = Router();
+    // facebook routes for testing
+    router.get("/face", (req, res) => {
+      res.send('<a href = "/user/auth/facebook">Auth with facebook </a>');
+    });
+    router.get(
+      "/auth/facebook",
+      passport.authenticate("facebook", { scope: ["email"] })
+    );
+
+    router.get(
+      "/facebook/callback",
+      passport.authenticate("facebook", {
+        successRedirect: "/user/face/protected",
+        failureRedirect: "/user/face/failure",
+      })
+    );
+
+    router.get("/face/failure", (req, res) => {
+      res.send("facebook something was wrong");
+    });
+
+    router.get("/face/protected", (req, res) => {
+      res.send("facebook succes");
+    });
+
+    // google routes for testing
+    router.get("/", (req, res) => {
+      res.send(
+        '<a href = "/user/auth/google">Auth with google </a><br/><a href = "/user/auth/facebook">Auth with facebook </a>'
+      );
+    });
+    router.get(
+      "/auth/google",
+      passport.authenticate("google", { scope: ["email", "profile"] })
+    );
+
+    router.get(
+      "/google/callback",
+      passport.authenticate("google", {
+        successRedirect: "/user/protected",
+        failureRedirect: "/user/failure",
+      })
+    );
+
+    router.get("/failure", (req, res) => {
+      res.send("something was wrong");
+    });
+
+    router.get("/protected", this.isLoggedIn || authorize, (req, res) => {
+      res.send("google succes");
+    });
+
+    router.get("/logout", function (req, res) {
+      req.logout();
+      res.redirect("/user");
+    });
+
     router.post("/register", this.registerUser.bind(this));
     router.post("/login", this.userLogin.bind(this));
     router.get("/test", authorize, this.testToken.bind(this));
@@ -45,6 +111,9 @@ export default class AccountController implements IController {
     app.use("/user", router);
   }
 
+  private isLoggedIn(req: Request, res: Response, next: NextFunction) {
+    req.user ? next() : res.sendStatus(401);
+  }
   private async registerUser(req: Request, res: Response, next: NextFunction) {
     const { errors } = validateRegistraionInputs(req.body);
     if (errors) {
@@ -53,7 +122,7 @@ export default class AccountController implements IController {
     }
 
     const { name, email, password, age } = req.body;
-    const user: User = new User(name, email, password, age);
+    const user: User = new User(name, email, age, password);
 
     const hashedPassword = await user.hashPasswords();
     console.log(hashedPassword);
@@ -134,12 +203,6 @@ export default class AccountController implements IController {
         await this.userService.updateOne(user._id, newUser);
       }
 
-      // then(async (res) => {
-      //   res!.photo = result.secure_url ?? ("" as string);
-      //   console.log("res photo ", res);
-      //   await this.userService.Save({ res });
-      //   console.log("test user ", test);
-      // });
       console.log(result);
       res.status(200).json({
         message: "images uploaded successfully",

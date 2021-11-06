@@ -1,7 +1,7 @@
 import { Document, ObjectId } from "mongoose";
 
 export interface UserDTO {
-  _id?: ObjectId;
+  _id?: string;
   name: string;
   email: string;
   password: string;
@@ -10,4 +10,6 @@ export interface UserDTO {
   createdAt?: string;
   passwordResetToken?: String;
   passwordResetTokenExpiryDate?: Date;
+  oAuthId?: string;
+  oAuthToken?: string;
 }

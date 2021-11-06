@@ -65,10 +65,7 @@ export abstract class BaseRepository<TEntity, TModel extends Document>
 
   // public async saveItems(item:T)
 
-  public async update(
-    id: ObjectId,
-    item: TEntity
-  ): Promise<TEntity | undefined> {
+  public async update(id: string, item: TEntity): Promise<TEntity | undefined> {
     const model = await this._model.findByIdAndUpdate(id, item);
     if (!model) {
       return undefined;
@@ -77,7 +74,7 @@ export abstract class BaseRepository<TEntity, TModel extends Document>
   }
 
   public async updateOne(
-    id: ObjectId,
+    id: string,
     item: TEntity
   ): Promise<TEntity | undefined> {
     const model = await this._model.findById(id);

@@ -32,9 +32,9 @@ export class UserRepository
     const {
       name,
       email,
-      password,
-      age,
       photo,
+      age,
+      password,
       createdAt,
       _id,
       passwordResetToken,
@@ -43,8 +43,8 @@ export class UserRepository
     const newUser = new User(
       name,
       email,
-      password,
       age,
+      password,
       photo,
       createdAt,
       _id,

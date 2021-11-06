@@ -76,21 +76,21 @@ export class UploadImages implements IUploadImage {
   }
 }
 
-export const uploads = (file: any, folder: any) => {
-  return new Promise((resolve) => {
-    cloudinary.v2.uploader.upload(
-      file,
-      { folder: folder },
-      (error, result: any) => {
-        if (error) {
-          console.log(error);
-        }
-        console.log(result);
-        resolve({
-          url: result.url,
-          id: result.public_id,
-        });
-      }
-    );
-  });
-};
+// export const uploads = (file: any, folder: any) => {
+//   return new Promise((resolve) => {
+//     cloudinary.v2.uploader.upload(
+//       file,
+//       { folder: folder },
+//       (error, result: any) => {
+//         if (error) {
+//           console.log(error);
+//         }
+//         console.log(result);
+//         resolve({
+//           url: result.url,
+//           id: result.public_id,
+//         });
+//       }
+//     );
+//   });
+// };

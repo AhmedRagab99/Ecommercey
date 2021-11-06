@@ -1,3 +1,4 @@
+import expressSession from "express-session";
 import { configureDB } from "./utils/configureDB";
 import express, { Application } from "express";
 import * as bodyParser from "body-parser";
@@ -9,6 +10,7 @@ import dotenv from "dotenv";
 import passport from "passport";
 import { Strategy } from "passport-facebook";
 import cloudinary from "cloudinary";
+import session from "express-session";
 
 export default class Server {
   private app: Application;
@@ -42,6 +44,9 @@ export default class Server {
     dotenv.config();
     this.app.use(express.json());
     this.app.use(express.urlencoded());
+    this.app.use(session({ secret: "ecommercy" }));
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
     // this.app.use(express.static(__dirname));
 
     // this.app.use(passport.initialize());
