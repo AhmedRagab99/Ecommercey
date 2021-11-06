@@ -15,26 +15,27 @@ import { encryptValue } from "../utils/helperfunctions";
 import { UserModel } from "../models/user/UserSchema";
 import { upload } from "../utils/multer";
 
-import "../utils/passport";
+import "../services/SocialAuthService";
 import passport from "passport";
-import GoogleStrategy, { IGoogleStrateegy } from "../utils/passport";
+import SocialMediaAuthStrategy, {
+  IAuthStrateegy,
+} from "../services/SocialAuthService";
 // import { uploads } from "../utils/upload";
 export default class AccountController implements IController {
   private userService: IUserServices;
   private uploadImages: IUploadImage;
-  private googleStrategy: IGoogleStrateegy;
+  private authStrategy: IAuthStrateegy;
 
   constructor(
     userService: IUserServices = new UserService(),
     uploadImage: IUploadImage = new UploadImages(),
-    googleStrategy: IGoogleStrateegy = new GoogleStrategy(userService)
+    googleStrategy: IAuthStrateegy = new SocialMediaAuthStrategy(userService)
   ) {
     this.userService = userService;
     this.uploadImages = uploadImage;
-    this.googleStrategy = googleStrategy;
-    // this.googleStrategy.setup();
-    this.googleStrategy.facebookSetup();
-    this.googleStrategy.setup();
+    this.authStrategy = googleStrategy;
+    this.authStrategy.facebookSetup();
+    this.authStrategy.googleSetup();
   }
 
   register(app: Application): void {
@@ -60,7 +61,7 @@ export default class AccountController implements IController {
       res.send("facebook something was wrong");
     });
 
-    router.get("/face/protected", (req, res) => {
+    router.get("/face/protected", this.isLoggedIn || authorize, (req, res) => {
       res.send("facebook succes");
     });
 
@@ -91,14 +92,12 @@ export default class AccountController implements IController {
       res.send("google succes");
     });
 
-    router.get("/logout", function (req, res) {
-      req.logout();
-      res.redirect("/user");
-    });
+    router.get("/logout", this.logOut.bind(this));
 
     router.post("/register", this.registerUser.bind(this));
     router.post("/login", this.userLogin.bind(this));
     router.get("/test", authorize, this.testToken.bind(this));
+
     router.post("/forgot-password", this.forgetPassword.bind(this));
     router.post(
       "/upload",
@@ -109,6 +108,11 @@ export default class AccountController implements IController {
     router.patch("/reset-password/:token", this.resetPassword.bind(this));
 
     app.use("/user", router);
+  }
+
+  private logOut(req: Request, res: Response, next: NextFunction) {
+    req.logout();
+    res.redirect("/user");
   }
 
   private isLoggedIn(req: Request, res: Response, next: NextFunction) {
