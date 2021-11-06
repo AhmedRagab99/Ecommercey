@@ -57,50 +57,61 @@ export default class GoogleStrategy implements IGoogleStrateegy {
           done: VerifyCallback
         ) => {
           {
-            //   if (accessToken == accesstoken) console.log(profile);
-
-            const findUser = await this.userService.findOne({
-              oAuthId: profile.id,
-            });
-
-            if (findUser) {
-              console.log("found user in db ");
-              const token = findUser?.generateAuthenticationToken();
-              console.log(token);
-              return done(null, findUser);
-            } else {
-              const user = new User(
-                profile.name.givenName + " " + profile.name.familyName,
-                profile.emails[0].value as string
-              );
-
-              user.photo = profile.photos[0].value as string;
-              user.oAuthId = profile.id as string;
-              user.oAuthToken = accessToken as string;
-
-              const result = await this.userService.create(user);
-              console.log(result);
-              if (result) {
-                const token = user.generateAuthenticationToken();
-                console.log(token);
-                return done(null, result);
-              } else {
-                return (
-                  new ApiError(
-                    "cannot login with google please try again later",
-                    400,
-                    { body: "cannot login with google please try again later" }
-                  ),
-                  null
-                );
-              }
-            }
+            this.loginLogic(
+              {
+                id: profile.id,
+                name: profile.name.givenName + " " + profile.name.familyName,
+                email: profile.emails[0].value,
+                picture: profile.photos[0].value,
+                authToken: accessToken,
+              },
+              done
+            );
           }
         }
       )
     );
+
     this.serialization();
   }
+
+  private async loginLogic(
+    { id, name, email, picture, authToken }: any,
+    done: VerifyCallback
+  ) {
+    const findUser = await this.userService.findOne({
+      oAuthId: id,
+    });
+
+    if (findUser) {
+      console.log("found user in db ");
+      const token = findUser?.generateAuthenticationToken();
+      console.log(token);
+      return done(null, findUser);
+    } else {
+      const user = new User(name, email);
+
+      user.photo = picture as string;
+      user.oAuthId = id as string;
+      user.oAuthToken = authToken as string;
+
+      const result = await this.userService.create(user);
+      console.log(result);
+      if (result) {
+        const token = user.generateAuthenticationToken();
+        console.log(token);
+        return done(null, result);
+      } else {
+        return (
+          new ApiError("cannot login with google please try again later", 400, {
+            body: "cannot login with google please try again later",
+          }),
+          null
+        );
+      }
+    }
+  }
+
   public setup(accesstoken?: string) {
     passport.use(
       new Strategy(
@@ -117,44 +128,52 @@ export default class GoogleStrategy implements IGoogleStrateegy {
           profile: any,
           done: VerifyCallback
         ) => {
-          //   if (accessToken == accesstoken) console.log(profile);
+          this.loginLogic(
+            {
+              id: profile.id,
+              name: profile._json.name,
+              email: profile._json.email,
+              picture: profile._json.picture,
+              authToken: accessToken,
+            },
+            done
+          );
+          //   const findUser = await this.userService.findOne({
+          //     oAuthId: profile.id,
+          //   });
 
-          const findUser = await this.userService.findOne({
-            oAuthId: profile.id,
-          });
+          //   if (findUser) {
+          //     console.log("found user in db ");
+          //     const token = findUser?.generateAuthenticationToken();
+          //     console.log(token);
+          //     return done(null, findUser);
+          //   } else {
+          //     const user = new User(
+          //       profile._json.name as string,
+          //       profile._json.email as string
+          //     );
 
-          if (findUser) {
-            console.log("found user in db ");
-            const token = findUser?.generateAuthenticationToken();
-            console.log(token);
-            return done(null, findUser);
-          } else {
-            const user = new User(
-              profile._json.name as string,
-              profile._json.email as string
-            );
+          //     user.photo = profile._json.picture as string;
+          //     user.oAuthId = profile.id as string;
+          //     user.oAuthToken = accessToken as string;
 
-            user.photo = profile._json.picture as string;
-            user.oAuthId = profile.id as string;
-            user.oAuthToken = accessToken as string;
-
-            const result = await this.userService.create(user);
-            console.log(result);
-            if (result) {
-              const token = user.generateAuthenticationToken();
-              console.log(token);
-              return done(null, result);
-            } else {
-              return (
-                new ApiError(
-                  "cannot login with google please try again later",
-                  400,
-                  { body: "cannot login with google please try again later" }
-                ),
-                null
-              );
-            }
-          }
+          //     const result = await this.userService.create(user);
+          //     console.log(result);
+          //     if (result) {
+          //       const token = user.generateAuthenticationToken();
+          //       console.log(token);
+          //       return done(null, result);
+          //     } else {
+          //       return (
+          //         new ApiError(
+          //           "cannot login with google please try again later",
+          //           400,
+          //           { body: "cannot login with google please try again later" }
+          //         ),
+          //         null
+          //       );
+          //     }
+          //   }
         }
       )
     );
